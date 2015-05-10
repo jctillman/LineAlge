@@ -415,6 +415,6 @@ module.exports = {
 	'zeroMatrix': zeroMatrix,
 	'identMatrix': identMatrix,
 	'diagMatrix': diagMatrix,
-	
+
 	'Vector': Vector
 }
