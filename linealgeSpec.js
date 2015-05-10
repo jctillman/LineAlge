@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var lg = require('./linalg.js');
+var lg = require('./linealge.js');
 
 describe('Matrix constructor', function(){
 
