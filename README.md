@@ -1,6 +1,6 @@
 # LineAlge
 
-LineAlge is a inear algebra library with chaining.
+LineAlge is a linear algebra library with chaining.
 
 It is not particularly fast, but it should be clear and easy to understand.
 
