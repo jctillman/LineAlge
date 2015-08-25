@@ -1,8 +1,5 @@
-
 //These function are not tested, because I've used them elsewhere
-//or they are just so fucking simple that I don't need to worry about them.
-//They fail in places they obviously fail.
-
+//or they are just so simple that I don't need to worry about them.
 
 //The really simple ones.
 function multiply(one, two){return one * two;}
@@ -28,6 +25,7 @@ function objPropReturn(obj, prop, val){
 
 
 //Less simple, but so extensively used I see no need for tests.
+//Deep map works like map, but can be used on arbitrarily nested arrays.
 var deepMap = function(arr, func){
 	return arr.map(function(n){return Array.isArray(n) ? deepMap(n, func) : func(n); });
 };
@@ -131,17 +129,18 @@ var joinArr = function(a,b,c,d){
 //This is the matrix, basically a holder for data and functions so that the
 //functions can be chained.
 //NONE OF THE METHODS SHOULD MODIFY ANYTHING IN IT.
+//EVER
 //The preferred way of working is to make a new matrix for every stage of work.
 var Matrix = function(m){
 	//If passed a two-dimensional array, just take it in.
 	if(Array.isArray(m) && Array.isArray(m[0])){
 		this.mx = m;};
 
-	//If passed a one-dimensional array, assume it is a vector, and make it thus.
+	//If passed a one-dimensional array, assume it is a vertical vector, a matrix of one column, and make it thus.
 	if(Array.isArray(m) && !Array.isArray(m[0])){
 		this.mx = m.reduce(function(old, current){return old.concat([[current]]);},[]);};
 
-	//If passed a bunch of parameters, assume it is a vector, and make it thus.
+	//If passed a bunch of parameters, assume it is a vertical vector, a matrix of one column, and make it thus.
 	var args = Array.prototype.slice.call(arguments);
 	if(!Array.isArray(m) && args.length > 0){
 		this.mx = args.reduce(function(old, current){return old.concat([[current]]);},[]);}
@@ -171,15 +170,17 @@ var identMatrix = function(size){
 
 //Ways of returning arrays.
 Matrix.prototype.rows = function(){
-	return this.mx;
+	return this.mx.slice();
 } 
 Matrix.prototype.cols = function(){
+	//console.log(this)
 	return this.mx.reduce(function(past, current){
 		return current.reduce(function(prior, value, index){
 				prior[index].push(value);
 				return prior;},
 			past);}, 
-		arrayOfFill(this.mx[0].length, arr));}
+		arrayOfFill(this.mx[0].length, arr));
+}
 Matrix.prototype.row = function(num){
 	return this.rows()[num];
 }
@@ -223,7 +224,7 @@ Matrix.prototype.isSymmetric = function(){
 Matrix.prototype.isOrthogonal = function(){
 	if(!this.isSquare()){return false;}
 	if(!permuteCompare(this.rows(), function(a,b){return new Vector(a).isOrthonormalTo(new Vector(b));})){return false;}
-	if(!permuteCompare(this.rows(), function(a,b){return new Vector(a).isOrthonormalTo(new Vector(b));})){return false;}
+	if(!permuteCompare(this.cols(), function(a,b){return new Vector(a).isOrthonormalTo(new Vector(b));})){return false;}
 	return true;
 }
 
