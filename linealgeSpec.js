@@ -337,6 +337,108 @@ describe(' vector stuff returns acceptable scalars', function(){
 });
 
 
+describe(' can do Gauss-Jordan elimination correctly', function(){
+
+	describe(' testing operations performed while doing Gaussian reduction', function(){
+
+		it('Is able to swap rows', function(){
+
+			var A = new lg.Matrix([[1,2,3],[4,5,6],[7,8,9]]);
+			var B = new lg.Matrix([[4,5,6],[1,2,3],[7,8,9]]);
+			expect(A.rowSwap(0,1).eq(B)).to.eql(true);
+
+			var A = new lg.Matrix([[1,2,3],[4,5,6],[7,8,9]]);
+			var B = new lg.Matrix([[7,8,9],[4,5,6],[1,2,3]]);
+			expect(A.rowSwap(2,0).eq(B)).to.eql(true);
+
+		});
+
+		it('Is able to multiply rows', function(){
+
+			var A = new lg.Matrix([[1,2,3],[4,5,6],[7,8,9]]);
+			var B = new lg.Matrix([[2,4,6],[4,5,6],[7,8,9]]);
+			expect(A.rowMult(0,1).eq(A)).to.eql(true);
+			expect(A.rowMult(0,2).eq(B)).to.eql(true);
+
+		});
+
+		it('Is able to add rows to each other', function(){
+
+			var A = new lg.Matrix([[1,2,3],[4,5,6],[7,8,9]])
+			var B = new lg.Matrix([[5,7,9],[4,5,6],[7,8,9]])
+			var C = new lg.Matrix([[8,10,12],[4,5,6],[7,8,9]])
+			expect(A.rowAdd(0,1).eq(B)).to.eql(true);
+			expect(A.rowAdd(0,2).eq(C)).to.eql(true);
+
+		});
+
+	});
+
+	describe(' testing normal guass Jordan elimination', function(){
+
+		it(' works on a simple 2x2 matrix', function(){
+
+			var A = new lg.Matrix([[3,-2],[6,1]]);
+			var B = new lg.Matrix([[1,0],[0,1]]);
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+		});
+
+		it(' works on a simple 3x3 matrix', function(){
+
+			var A = new lg.Matrix([[0,1,2],[4,5,6],[8,9,10]]);
+			var B = new lg.Matrix([[1,0,-1],[0,1,2],[0,0,0]]);
+
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+		});
+
+		it(' works on some 4x4 matrixes', function(){
+
+			var A = new lg.Matrix([[1,3,5,8],[1,2,4,-1],[2,0,0,2],[0,1,1,0]]);
+			var B = new lg.Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+
+			var A = new lg.Matrix([[1,2,3,4],[6,7,8,9],[11,12,13,14],[16,17,18,19]]);
+			var B = new lg.Matrix([[1,0,-1,-2],[0,1,2,3],[0,0,0,0],[0,0,0,0]]);
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+		});
+
+		it (' works on some non-symmetric matrixes', function(){
+			var A = new lg.Matrix([[ 1, 0, 3, 1, 2 ], [ 1, 4, 2, 1, 5 ], [ 3, 4, 8, 1, 2 ]]);
+			var B = new lg.Matrix([[ 1, 0, 3, 0, -3/2], [0, 1, -1/4, 0, 3/4], [0,0,0,1,7/2]]);
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+			var A = new lg.Matrix([[ 0, 1, 3, 2], [ 0, 0, 5, 6], [ 1, 5, 1, 5]]);
+			var B = new lg.Matrix([[ 1, 0, 0, 59/5], [0, 1, 0, -8/5], [0,0,1,6/5]])
+			expect(A.gaussJordan().eq(B)).to.eql(true);
+
+		})
+
+	});
+
+
+	describe('Testing row equivalency function', function(){
+
+		it('works', function(){
+
+			var A = new lg.Matrix([[ 1, 2],[ 4, 8]]);
+			var B = new lg.Matrix([[ 0, 1],[ 1, 2]]);
+			expect(A.rowEquivalent(B)).to.eql(false);
+
+			var A = new lg.Matrix([[ 1, 0, 2],[3,-1,1], [5,-1,5]]);
+			var B = new lg.Matrix([[ 1, 0, 2],[0, 2,10], [2,0,4]]);
+			expect(A.rowEquivalent(B)).to.eql(true);
+
+		});
+
+	});
+
+});
+
+
 // describe(' vector stuff returns acceptable scalars', function(){
 // 	it(' gets the LP norms working', function(){
 

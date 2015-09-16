@@ -173,7 +173,6 @@ Matrix.prototype.rows = function(){
 	return this.mx.slice();
 } 
 Matrix.prototype.cols = function(){
-	//console.log(this)
 	return this.mx.reduce(function(past, current){
 		return current.reduce(function(prior, value, index){
 				prior[index].push(value);
@@ -344,6 +343,99 @@ Matrix.prototype.inverse = function(){
 }
 
 
+//
+Matrix.prototype.rowSwap = function(a,b){
+	var repl = this.mx.slice()
+	var temp = this.mx.slice()[a];
+	repl[a] = repl[b].slice()
+	repl[b] = temp;
+	return new Matrix(repl);
+
+}
+
+Matrix.prototype.rowMult = function(row, val){
+	var repl = this.mx.slice();
+	repl[row] = repl[row].map(function(n){return n * val;});
+	return new Matrix(repl);
+}
+
+Matrix.prototype.rowAdd = function(altered, altering){
+
+	var repl = this.mx.slice();
+	repl[altered] = repl[altered].map(function(n,i){ return n + repl[altering][i]});
+	return new Matrix(repl);
+
+}
+
+Matrix.prototype.gaussJordan = function(){
+	var current = new Matrix(this.mx);
+	var looping = true;
+	var i = 0;
+	var j = 0;
+	while(looping){
+		var changed = false
+
+		if(current.mx[i][j] == 0){
+			if(current.col(j).every(function(n){return n == 0;})){
+				console.log("All zero")
+				j = j + 1;
+			}else{
+				console.log("i, j,", current.mx)
+				var nonZeroIndex = current.col(j).reduce(function(_, val, ind){ return (val != 0 && ind > i) ? ind : _ ; }, i);
+				//console.log("To swap ", nonZeroIndex, " with ", i)
+				//console.log("Before swap", current.mx);
+				if (nonZeroIndex != i){
+					current = current.rowSwap(nonZeroIndex,i);
+				}else{
+					j = j + 1;
+				}
+				//console.log("After swap", current.mx)
+				if (current.row(i).every(function(n){return n == 0;}) ) {
+					looping = false;
+				}
+			}
+		}else{
+			console.log("I, J, mx", i,j,current.mx)
+			current = current.rowMult(i, 1/current.mx[i][j]);
+			console.log(current.mx)
+			for(var x = 0; x < current.mx.length; x++){
+				console.log(x,i,j)
+				if (current.mx[x][j] != 0 && x != i){
+					//console.log(x,j, current.mx[x][j])
+					var val = -current.mx[x][j]
+					current = current.rowMult(i, -current.mx[x][j] )
+					current = current.rowAdd( x,  i )
+					current = current.rowMult(i, 1/val);
+				}
+			}
+
+			i = i + 1;
+			j = j + 1;
+			console.log("After iter", i,j, current.mx)
+		}
+
+		if (j == current.mx[0].length || i == current.mx.length){
+			looping = false;
+		}
+	}
+
+	console.log("End:", current.mx)
+	return current
+
+}
+
+Matrix.prototype.gaussJordanAug = function(){
+	
+}
+
+Matrix.prototype.rowEquivalent = function(other){
+	if (this.dimensions().rows != other.dimensions().rows || this.dimensions().cols != other.dimensions().cols ){return false;}
+	return this.gaussJordan().eq(other.gaussJordan());
+}
+
+Matrix.prototype.rowEquiv = Matrix.prototype.rowEquivalent;
+
+
 
 
 
@@ -411,11 +503,11 @@ Vector.prototype.softMax = function(){
 
 
 
+
 module.exports = {
 	'Matrix': Matrix,
 	'zeroMatrix': zeroMatrix,
 	'identMatrix': identMatrix,
 	'diagMatrix': diagMatrix,
-
 	'Vector': Vector
 }
