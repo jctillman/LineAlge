@@ -368,58 +368,45 @@ Matrix.prototype.rowAdd = function(altered, altering){
 }
 
 Matrix.prototype.gaussJordan = function(){
-	var current = new Matrix(this.mx);
+	var current = this;
 	var looping = true;
 	var i = 0;
 	var j = 0;
 	while(looping){
-		var changed = false
 
-		if(current.mx[i][j] == 0){
-			if(current.col(j).every(function(n){return n == 0;})){
-				console.log("All zero")
-				j = j + 1;
-			}else{
-				console.log("i, j,", current.mx)
-				var nonZeroIndex = current.col(j).reduce(function(_, val, ind){ return (val != 0 && ind > i) ? ind : _ ; }, i);
-				//console.log("To swap ", nonZeroIndex, " with ", i)
-				//console.log("Before swap", current.mx);
-				if (nonZeroIndex != i){
-					current = current.rowSwap(nonZeroIndex,i);
-				}else{
-					j = j + 1;
-				}
-				//console.log("After swap", current.mx)
-				if (current.row(i).every(function(n){return n == 0;}) ) {
-					looping = false;
-				}
-			}
+		var thisRowAllZeros = current.row(i).every(function(n){return n == 0;});
+		var thisColAllZeros = current.col(j).every(function(n){return n == 0;});
+
+		var nextNonZeroColElement = current
+			.col(j)
+			.reduce(function(_, val, ind){ return (val != 0 && ind > i) ? ind : _ ; }, i);
+
+		if (thisRowAllZeros && i != nextNonZeroColElement){
+			current = current.rowSwap(nextNonZeroColElement, i)
+		}else if(thisRowAllZeros){
+			looping = false;
+		}else if (thisColAllZeros || ((current.mx[i][j] == 0) && (nextNonZeroColElement == i))){
+			j = j + 1;
+		}else if(current.mx[i][j] == 0 ){
+			current = current.rowSwap(nextNonZeroColElement,i);
 		}else{
-			console.log("I, J, mx", i,j,current.mx)
 			current = current.rowMult(i, 1/current.mx[i][j]);
-			console.log(current.mx)
 			for(var x = 0; x < current.mx.length; x++){
-				console.log(x,i,j)
 				if (current.mx[x][j] != 0 && x != i){
-					//console.log(x,j, current.mx[x][j])
 					var val = -current.mx[x][j]
 					current = current.rowMult(i, -current.mx[x][j] )
 					current = current.rowAdd( x,  i )
 					current = current.rowMult(i, 1/val);
 				}
 			}
-
 			i = i + 1;
 			j = j + 1;
-			console.log("After iter", i,j, current.mx)
 		}
 
 		if (j == current.mx[0].length || i == current.mx.length){
 			looping = false;
 		}
 	}
-
-	console.log("End:", current.mx)
 	return current
 
 }

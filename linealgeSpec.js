@@ -434,6 +434,39 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 
 		});
 
+		it('works with a bunch of randomly generated matrices!!!', function(){
+
+			for(var xxx = 0; xxx < 100; xxx++){
+
+				var randomRow = Math.round(1 + Math.random() * 5);
+				var randomCol = Math.round(1 + Math.random() * 5);
+
+				var building = [];
+				for(var x = 0; x < randomRow; x++){
+					building.push([]);
+					for(var y = 0; y < randomCol; y++){
+						building[x].push(Math.floor( (Math.random()-0.5)*15 ));
+					}
+				}
+				//console.log(building);
+				var A = new lg.Matrix(building);
+				var B = new lg.Matrix(building);
+				for(var x = 0; x < 3; x++){
+					B = B.rowMult(Math.floor( Math.random()*A.mx.length ), Math.floor(Math.random()*2+1) );
+					B = B.rowSwap(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
+					B = B.rowAdd(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
+				}
+				console.log("Original", A.mx);
+				console.log("Reduced", A.gaussJordan().mx);
+				console.log("Original", B.mx);
+				console.log("Reduced", B.gaussJordan().mx);
+
+				expect(A.rowEquivalent(B)).to.eql(true);
+
+			}
+
+		});
+
 	});
 
 });
