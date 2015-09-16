@@ -372,23 +372,19 @@ Matrix.prototype.gaussJordan = function(){
 	var looping = true;
 	var i = 0;
 	var j = 0;
-	while(looping){
+	while(i < current.mx.length && j < current.mx[0].length){
 
 		var thisRowAllZeros = current.row(i).every(function(n){return n == 0;});
-		var thisColAllZeros = current.col(j).every(function(n){return n == 0;});
-
 		var nextNonZeroColElement = current
 			.col(j)
 			.reduce(function(_, val, ind){ return (val != 0 && ind > i) ? ind : _ ; }, i);
 
-		if (thisRowAllZeros && i != nextNonZeroColElement){
+		if ( (thisRowAllZeros && i != nextNonZeroColElement) || (current.mx[i][j] == 0 && nextNonZeroColElement != i) ){
 			current = current.rowSwap(nextNonZeroColElement, i)
 		}else if(thisRowAllZeros){
-			looping = false;
-		}else if (thisColAllZeros || ((current.mx[i][j] == 0) && (nextNonZeroColElement == i))){
+			i = i + 1;
+		}else if (current.mx[i][j] == 0 && nextNonZeroColElement == i){
 			j = j + 1;
-		}else if(current.mx[i][j] == 0 ){
-			current = current.rowSwap(nextNonZeroColElement,i);
 		}else{
 			current = current.rowMult(i, 1/current.mx[i][j]);
 			for(var x = 0; x < current.mx.length; x++){
@@ -401,10 +397,6 @@ Matrix.prototype.gaussJordan = function(){
 			}
 			i = i + 1;
 			j = j + 1;
-		}
-
-		if (j == current.mx[0].length || i == current.mx.length){
-			looping = false;
 		}
 	}
 	return current

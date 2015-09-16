@@ -456,10 +456,10 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 					B = B.rowSwap(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
 					B = B.rowAdd(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
 				}
-				console.log("Original", A.mx);
-				console.log("Reduced", A.gaussJordan().mx);
-				console.log("Original", B.mx);
-				console.log("Reduced", B.gaussJordan().mx);
+				//console.log("Original", A.mx);
+				//console.log("Reduced", A.gaussJordan().mx);
+				//console.log("Original", B.mx);
+				//console.log("Reduced", B.gaussJordan().mx);
 
 				expect(A.rowEquivalent(B)).to.eql(true);
 
