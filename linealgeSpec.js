@@ -415,7 +415,11 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 			var B = new lg.Matrix([[ 1, 0, 0, 59/5], [0, 1, 0, -8/5], [0,0,1,6/5]])
 			expect(A.gaussJordan().eq(B)).to.eql(true);
 
-		})
+		});
+
+		it(' works on some augmented matrixes', function(){
+
+		});
 
 	});
 
@@ -436,11 +440,9 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 
 		it('works with a bunch of randomly generated matrices!!!', function(){
 
-			for(var xxx = 0; xxx < 100; xxx++){
-
+			for(var i = 0; i < 100; i++){
 				var randomRow = Math.round(1 + Math.random() * 5);
 				var randomCol = Math.round(1 + Math.random() * 5);
-
 				var building = [];
 				for(var x = 0; x < randomRow; x++){
 					building.push([]);
@@ -448,7 +450,6 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 						building[x].push(Math.floor( (Math.random()-0.5)*15 ));
 					}
 				}
-				//console.log(building);
 				var A = new lg.Matrix(building);
 				var B = new lg.Matrix(building);
 				for(var x = 0; x < 3; x++){
@@ -456,11 +457,6 @@ describe(' can do Gauss-Jordan elimination correctly', function(){
 					B = B.rowSwap(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
 					B = B.rowAdd(Math.floor( Math.random()*A.mx.length ), Math.floor( Math.random()*A.mx.length ));
 				}
-				//console.log("Original", A.mx);
-				//console.log("Reduced", A.gaussJordan().mx);
-				//console.log("Original", B.mx);
-				//console.log("Reduced", B.gaussJordan().mx);
-
 				expect(A.rowEquivalent(B)).to.eql(true);
 
 			}

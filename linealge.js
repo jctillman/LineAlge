@@ -367,23 +367,22 @@ Matrix.prototype.rowAdd = function(altered, altering){
 
 }
 
-Matrix.prototype.gaussJordan = function(){
+Matrix.prototype.gaussJordan = function(augmented){
 	var current = this;
-	var looping = true;
 	var i = 0;
 	var j = 0;
-	while(i < current.mx.length && j < current.mx[0].length){
+	while(i < current.mx.length && j < ( current.mx[0].length - ( (augmented) ? 1 : 0 ) ) ) {
 
 		var thisRowAllZeros = current.row(i).every(function(n){return n == 0;});
 		var nextNonZeroColElement = current
 			.col(j)
 			.reduce(function(_, val, ind){ return (val != 0 && ind > i) ? ind : _ ; }, i);
 
-		if ( (thisRowAllZeros && i != nextNonZeroColElement) || (current.mx[i][j] == 0 && nextNonZeroColElement != i) ){
+		if (current.mx[i][j] == 0 && nextNonZeroColElement != i){
 			current = current.rowSwap(nextNonZeroColElement, i)
 		}else if(thisRowAllZeros){
 			i = i + 1;
-		}else if (current.mx[i][j] == 0 && nextNonZeroColElement == i){
+		}else if (current.mx[i][j] == 0){
 			j = j + 1;
 		}else{
 			current = current.rowMult(i, 1/current.mx[i][j]);
@@ -401,10 +400,6 @@ Matrix.prototype.gaussJordan = function(){
 	}
 	return current
 
-}
-
-Matrix.prototype.gaussJordanAug = function(){
-	
 }
 
 Matrix.prototype.rowEquivalent = function(other){
